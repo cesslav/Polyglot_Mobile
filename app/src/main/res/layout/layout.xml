@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#6441a5"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/main_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Полиглот"
+        android:textSize="30sp"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <EditText
+        android:id="@+id/input_text"
+        android:layout_width="350dp"
+        android:layout_height="100dp"
+        android:ems="10"
+        android:hint="Введите текст для перевода..."
+        android:background="@color/light"
+        android:textColor="@color/black"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_label"
+        app:layout_constraintVertical_bias="0.017" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/light"
+        android:text="Перевести"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/output_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_text"
+        app:strokeColor="#000"
+        app:strokeWidth="2dp" />
+
+    <TextView
+        android:id="@+id/output_text"
+        android:layout_width="350dp"
+        android:layout_height="100dp"
+        android:hint="Здесь появится перевод Вашего текста."
+        android:background="@color/light"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.375" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/translate_menu_button"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        style="@style/Widget.MaterialComponents.Button"
+        android:text="перевод"
+        android:backgroundTint="@color/dark"
+        android:textColor="@color/black"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_menu_button"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        style="@style/Widget.MaterialComponents.Button"
+        android:text="настройки"
+        android:backgroundTint="@color/light"
+        android:textColor="@color/black"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/downloads_menu_button"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/light"
+        android:text="загрузки"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/settings_menu_button"
+        app:layout_constraintHorizontal_bias="0.578"
+        app:layout_constraintStart_toEndOf="@+id/translate_menu_button"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
