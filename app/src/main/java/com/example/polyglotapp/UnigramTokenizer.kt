@@ -3,9 +3,10 @@ package com.example.polyglotapp
 import android.content.Context
 import android.util.Log
 import com.google.gson.JsonParser
+import java.io.File
 
 
-class UnigramTokenizer(context: Context) {
+class UnigramTokenizer(context: Context, modelDir: File = context.filesDir) {
 
     var bosId: Int = 0; private set
     var eosId: Int = 1; private set
@@ -17,10 +18,15 @@ class UnigramTokenizer(context: Context) {
     private val tokenToId: Map<String, Int>
 
     init {
-        val raw = context.assets.open("tokenizer/tokenizer.json").bufferedReader().readText()
+        val tokenizerFile = File(modelDir, "tokenizer/tokenizer.json")
+        val raw = if (tokenizerFile.exists()) {
+            tokenizerFile.readText()
+        } else {
+            context.assets.open("tokenizer/tokenizer.json").bufferedReader().readText()
+        }
+
         val root = JsonParser.parseString(raw).asJsonObject
 
-        // Специальные токены из added_tokens
         root.getAsJsonArray("added_tokens")?.forEach { el ->
             val obj     = el.asJsonObject
             val id      = obj.get("id")?.asInt      ?: return@forEach
@@ -38,10 +44,10 @@ class UnigramTokenizer(context: Context) {
             ?.getAsJsonArray("vocab")
             ?: throw IllegalStateException("Не найден массив model.vocab в tokenizer.json")
 
-        val size    = vocabArr.size()
-        val mToId   = HashMap<String, Int>(size)
-        val mScore  = HashMap<String, Double>(size)
-        val mId     = Array(size) { "" }
+        val size   = vocabArr.size()
+        val mToId  = HashMap<String, Int>(size)
+        val mScore = HashMap<String, Double>(size)
+        val mId    = Array(size) { "" }
 
         vocabArr.forEachIndexed { id, el ->
             val pair  = el.asJsonArray
@@ -55,7 +61,7 @@ class UnigramTokenizer(context: Context) {
         idToToken  = mId
         vocabScore = mScore
         tokenToId  = mToId
-        Log.d(TAG, "Vocab loaded: $size tokens")
+        Log.d(TAG, "Vocab loaded: $size tokens from ${tokenizerFile.absolutePath}")
     }
 
     private fun viterbi(text: String): List<String> {
@@ -130,7 +136,6 @@ class UnigramTokenizer(context: Context) {
             sb.append(idToToken[intId])
         }
 
-        // ▁ → пробел, убираем ведущий пробел
         return sb.toString().replace('▁', ' ').trim()
     }
 

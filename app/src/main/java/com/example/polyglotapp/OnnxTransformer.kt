@@ -8,7 +8,7 @@ import java.io.File
 import java.nio.FloatBuffer
 import java.nio.LongBuffer
 
-class OnnxTransformer(context: Context) {
+class OnnxTransformer(context: Context, modelDir: File = context.filesDir) {
 
     private val env: OrtEnvironment = OrtEnvironment.getEnvironment()
     private val encoder: OrtSession
@@ -17,25 +17,24 @@ class OnnxTransformer(context: Context) {
     init {
         val opts = OrtSession.SessionOptions()
 
-        val encFile = copyAssetToFile(context, "encoder.onnx")
-        val decFile = copyAssetToFile(context, "decoder.onnx")
+        val encFile = resolveFile(context, modelDir, "encoder.onnx")
+        val decFile = resolveFile(context, modelDir, "decoder.onnx")
 
         encoder = env.createSession(encFile.absolutePath, opts)
         decoder = env.createSession(decFile.absolutePath, opts)
     }
 
-    private fun copyAssetToFile(context: Context, name: String): File {
-        val file = File(context.filesDir, name)
+    private fun resolveFile(context: Context, modelDir: File, name: String): File {
+        val file = File(modelDir, name)
+        if (file.exists()) return file
 
-        if (!file.exists()) {
+        val tmp = File(context.filesDir, name)
+        if (!tmp.exists()) {
             context.assets.open(name).use { input ->
-                file.outputStream().use { output ->
-                    input.copyTo(output)
-                }
+                tmp.outputStream().use { input.copyTo(it) }
             }
         }
-
-        return file
+        return tmp
     }
 
     fun encode(srcTokens: LongArray, seqLen: Int): FloatArray {
@@ -85,7 +84,6 @@ class OnnxTransformer(context: Context) {
         env.close()
     }
 
-    // Безопасное извлечение — floatBuffer может иметь ненулевой position
     private fun OnnxTensor.toFloatArray(): FloatArray {
         val buf = this.floatBuffer
         return FloatArray(buf.remaining()).also { buf.get(it) }

@@ -24,23 +24,19 @@ object BeamSearch {
             val candidates = ArrayList<Beam>(beamSize * (beamSize + 1))
 
             for (beam in beams) {
-                // Завершённый луч не расширяем
                 if (beam.tokens.last() == eosId) {
                     candidates.add(beam)
                     continue
                 }
 
-                // Один шаг декодера
                 val logits   = model.decode(beam.tokens, memory, srcLen, modelDim)
                 val tgtLen   = beam.tokens.size
                 val vocabSize = logits.size / tgtLen
 
-                // Логиты последнего токена
                 val start     = (tgtLen - 1) * vocabSize
                 val lastLogits = logits.copyOfRange(start, start + vocabSize)
                 val logProbs  = logSoftmax(lastLogits)
 
-                // Top-K расширений
                 logProbs.indices
                     .sortedByDescending { logProbs[it] }
                     .take(beamSize)
@@ -51,7 +47,6 @@ object BeamSearch {
                     }
             }
 
-            // Оставляем beamSize лучших
             beams = candidates.sortedByDescending { it.score }.take(beamSize)
         }
 
