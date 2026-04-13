@@ -326,12 +326,12 @@ class MainActivity : AppCompatActivity() {
         val srcTokens = tok.encode(text, maxSrcLen)
         val memory    = mdl.encode(srcTokens, maxSrcLen)
         val modelDim  = memory.size / maxSrcLen
-        val outTokens = BeamSearch.search(
+        val outTokens = GreedySearch.search(
             model    = mdl,
             memory   = memory,
             srcLen   = maxSrcLen,
             modelDim = modelDim,
-            beamSize = 1,
+            // beamSize = 1,
             maxLen   = 128,
             bosId    = tok.bosId.toLong(),
             eosId    = tok.eosId.toLong()
