@@ -1,12 +1,15 @@
 package com.example.polyglotapp
 // This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -39,6 +42,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var downloadsMenuButton: MaterialButton
     private lateinit var settingsMenuButton:  MaterialButton
 
+    private lateinit var settingsContainer:  LinearLayout
+    private lateinit var seekbarSrcLen:      SeekBar
+    private lateinit var seekbarMaxLen:      SeekBar
+    private lateinit var settingSrcLenValue: TextView
+    private lateinit var settingMaxLenValue: TextView
+
+    private var maxSrcLen: Int = DEFAULT_SRC_LEN
+    private var maxLen:    Int = DEFAULT_MAX_LEN
+
     private val installedModels = mutableListOf<Pair<String, String>>()
     private var selectedModelStem: String? = null
 
@@ -58,10 +70,19 @@ class MainActivity : AppCompatActivity() {
         downloadsList        = findViewById(R.id.downloads_list)
         downloadsStatus      = findViewById(R.id.downloads_status)
 
+        settingsContainer    = findViewById(R.id.settings_container)
+        seekbarSrcLen        = findViewById(R.id.seekbar_src_len)
+        seekbarMaxLen        = findViewById(R.id.seekbar_max_len)
+        settingSrcLenValue   = findViewById(R.id.setting_src_len_value)
+        settingMaxLenValue   = findViewById(R.id.setting_max_len_value)
+
         downloadsList.layoutManager = LinearLayoutManager(this)
 
         runButton.isEnabled = false
         modelSpinner.setEnabled(false)
+
+        loadSettings()
+        setupSettingsScreen()
 
         translateMenuButton.setOnClickListener { showTranslateScreen() }
         settingsMenuButton.setOnClickListener  { showSettingsScreen()  }
@@ -90,14 +111,74 @@ class MainActivity : AppCompatActivity() {
         showTranslateScreen()
     }
 
+
+    private fun loadSettings() {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        maxSrcLen = prefs.getInt(KEY_SRC_LEN, DEFAULT_SRC_LEN)
+        maxLen    = prefs.getInt(KEY_MAX_LEN, DEFAULT_MAX_LEN)
+    }
+
+    private fun saveSettings() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_SRC_LEN, maxSrcLen)
+            .putInt(KEY_MAX_LEN, maxLen)
+            .apply()
+    }
+
+
+    /**
+     * SeekBar progress → actual value mapping:
+     *   srcLen  : progress ∈ [0..7] → value = (progress + 1) * 64  → [64, 128, 192, 256, 320, 384, 448, 512]
+     *   maxLen  : progress ∈ [0..7] → value = (progress + 1) * 32  → [32,  64,  96, 128, 160, 192, 224, 256]
+     */
+    private fun srcLenFromProgress(p: Int) = (p + 1) * 64
+    private fun srcLenToProgress(v: Int)   = (v / 64 - 1).coerceIn(0, 7)
+    private fun maxLenFromProgress(p: Int) = (p + 1) * 32
+    private fun maxLenToProgress(v: Int)   = (v / 32 - 1).coerceIn(0, 7)
+
+    private fun setupSettingsScreen() {
+        seekbarSrcLen.progress = srcLenToProgress(maxSrcLen)
+        seekbarMaxLen.progress = maxLenToProgress(maxLen)
+        settingSrcLenValue.text = maxSrcLen.toString()
+        settingMaxLenValue.text = maxLen.toString()
+
+        seekbarSrcLen.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar, progress: Int, fromUser: Boolean) {
+                val value = srcLenFromProgress(progress)
+                settingSrcLenValue.text = value.toString()
+            }
+            override fun onStartTrackingTouch(sb: SeekBar) = Unit
+            override fun onStopTrackingTouch(sb: SeekBar) {
+                maxSrcLen = srcLenFromProgress(sb.progress)
+                saveSettings()
+                Log.d(TAG, "maxSrcLen changed to $maxSrcLen")
+            }
+        })
+
+        seekbarMaxLen.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar, progress: Int, fromUser: Boolean) {
+                val value = maxLenFromProgress(progress)
+                settingMaxLenValue.text = value.toString()
+            }
+            override fun onStartTrackingTouch(sb: SeekBar) = Unit
+            override fun onStopTrackingTouch(sb: SeekBar) {
+                maxLen = maxLenFromProgress(sb.progress)
+                saveSettings()
+                Log.d(TAG, "maxLen changed to $maxLen")
+            }
+        })
+    }
+
     private fun showTranslateScreen() {
         label.text = "Полиглот"
         translateMenuButton.setBackgroundColor(resources.getColor(R.color.dark))
         settingsMenuButton.setBackgroundColor(resources.getColor(R.color.light))
         downloadsMenuButton.setBackgroundColor(resources.getColor(R.color.light))
 
-        downloadsList.visibility   = View.GONE
-        downloadsStatus.visibility = View.GONE
+        downloadsList.visibility    = View.GONE
+        downloadsStatus.visibility  = View.GONE
+        settingsContainer.visibility = View.GONE
 
         inputEdit.visibility   = View.VISIBLE
         runButton.visibility   = View.VISIBLE
@@ -112,12 +193,14 @@ class MainActivity : AppCompatActivity() {
         settingsMenuButton.setBackgroundColor(resources.getColor(R.color.dark))
         downloadsMenuButton.setBackgroundColor(resources.getColor(R.color.light))
 
-        modelSpinner.visibility    = View.GONE
-        inputEdit.visibility       = View.GONE
-        runButton.visibility       = View.GONE
-        outputText.visibility      = View.GONE
-        downloadsList.visibility   = View.GONE
-        downloadsStatus.visibility = View.GONE
+        modelSpinner.visibility      = View.GONE
+        inputEdit.visibility         = View.GONE
+        runButton.visibility         = View.GONE
+        outputText.visibility        = View.GONE
+        downloadsList.visibility     = View.GONE
+        downloadsStatus.visibility   = View.GONE
+
+        settingsContainer.visibility = View.VISIBLE
     }
 
     private fun showDownloadsScreen() {
@@ -126,12 +209,14 @@ class MainActivity : AppCompatActivity() {
         settingsMenuButton.setBackgroundColor(resources.getColor(R.color.light))
         downloadsMenuButton.setBackgroundColor(resources.getColor(R.color.dark))
 
-        modelSpinner.visibility    = View.GONE
-        inputEdit.visibility       = View.GONE
-        runButton.visibility       = View.GONE
-        outputText.visibility      = View.GONE
-        downloadsList.visibility   = View.VISIBLE
-        downloadsStatus.visibility = View.VISIBLE
+        modelSpinner.visibility      = View.GONE
+        inputEdit.visibility         = View.GONE
+        runButton.visibility         = View.GONE
+        outputText.visibility        = View.GONE
+        settingsContainer.visibility = View.GONE
+
+        downloadsList.visibility    = View.VISIBLE
+        downloadsStatus.visibility  = View.VISIBLE
 
         loadDownloadsList()
     }
@@ -156,7 +241,6 @@ class MainActivity : AppCompatActivity() {
             outputText.text = "Модели не установлены. Перейдите в «Загрузки»."
             runButton.isEnabled = false
             modelSpinner.setEnabled(false)
-
             return
         }
 
@@ -183,7 +267,6 @@ class MainActivity : AppCompatActivity() {
             }
             override fun onNothingSelected(parent: AdapterView<*>) = Unit
         }
-
 
         val targetStem = installedModels[restoredPos].first
         if (targetStem != selectedModelStem || !isReady) {
@@ -239,6 +322,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ── Downloads screen ────────────────────────────────────────────────────
 
     private fun loadDownloadsList() {
         downloadsStatus.text = "Загрузка списка моделей…"
@@ -322,7 +406,6 @@ class MainActivity : AppCompatActivity() {
         val tok = tokenizer ?: return "Токенайзер не загружен"
         val mdl = model     ?: return "Модель не загружена"
 
-        val maxSrcLen = 256
         val srcTokens = tok.encode(text, maxSrcLen)
         val memory    = mdl.encode(srcTokens, maxSrcLen)
         val modelDim  = memory.size / maxSrcLen
@@ -331,8 +414,7 @@ class MainActivity : AppCompatActivity() {
             memory   = memory,
             srcLen   = maxSrcLen,
             modelDim = modelDim,
-            // beamSize = 1,
-            maxLen   = 128,
+            maxLen   = maxLen,
             bosId    = tok.bosId.toLong(),
             eosId    = tok.eosId.toLong()
         )
@@ -342,5 +424,13 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         model?.close()
+    }
+
+    companion object {
+        private const val PREFS_NAME      = "polyglot_settings"
+        private const val KEY_SRC_LEN     = "max_src_len"
+        private const val KEY_MAX_LEN     = "max_len"
+        private const val DEFAULT_SRC_LEN = 256
+        private const val DEFAULT_MAX_LEN = 128
     }
 }
