@@ -38,55 +38,68 @@ object ModelDownloadManager {
     fun downloadAndExtract(
         model: ModelInfo,
         destDir: File,
-        onProgress: (Int) -> Unit = {}
+        onProgress: (progress: Int?, isInstalling: Boolean) -> Unit
     ) {
         val url  = URL("$BASE_URL/models/${model.file}")
         val conn = url.openConnection() as HttpURLConnection
-        conn.connectTimeout = 15_000
-        conn.readTimeout    = 60_000
 
         try {
             conn.connect()
-            check(conn.responseCode == 200) {
-                "Сервер вернул ${conn.responseCode} для ${model.file}"
+
+            val totalBytes = conn.contentLengthLong
+            val zipFile = File(destDir.parentFile, model.file)
+
+            conn.inputStream.buffered().use { input ->
+                zipFile.outputStream().buffered().use { output ->
+                    val buffer = ByteArray(8 * 1024)
+                    var readBytes = 0L
+                    var n: Int
+
+                    onProgress(0, false)
+
+                    while (input.read(buffer).also { n = it } != -1) {
+                        output.write(buffer, 0, n)
+                        readBytes += n
+
+                        if (totalBytes > 0) {
+                            val progress = ((readBytes * 100) / totalBytes)
+                                .toInt()
+                                .coerceIn(0, 100)
+
+                            onProgress(progress, false)
+                        }
+                    }
+                }
             }
 
-            val totalBytes = conn.contentLengthLong.takeIf { it > 0 }
-            var readBytes  = 0L
+            onProgress(null, true)
 
-            ZipInputStream(conn.inputStream.buffered()).use { zis ->
+            ZipInputStream(zipFile.inputStream().buffered()).use { zis ->
                 var entry = zis.nextEntry
+
                 while (entry != null) {
+                    val outFile = File(destDir, entry.name)
+
                     if (entry.isDirectory) {
-                        File(destDir, entry.name).mkdirs()
+                        outFile.mkdirs()
                     } else {
-                        val outFile = File(destDir, entry.name)
-                        require(outFile.canonicalPath.startsWith(destDir.canonicalPath)) {
-                            "Подозрительный путь в архиве: ${entry.name}"
-                        }
                         outFile.parentFile?.mkdirs()
 
                         outFile.outputStream().buffered().use { out ->
-                            val buf = ByteArray(8 * 1024)
+                            val buffer = ByteArray(8 * 1024)
                             var n: Int
-                            while (zis.read(buf).also { n = it } != -1) {
-                                out.write(buf, 0, n)
-                                readBytes += n
-                                if (totalBytes != null) {
-                                    onProgress((readBytes * 100 / totalBytes).toInt())
-                                }
+                            while (zis.read(buffer).also { n = it } != -1) {
+                                out.write(buffer, 0, n)
                             }
                         }
-
-                        Log.d(TAG, "Распакован: ${outFile.name}")
                     }
+
                     zis.closeEntry()
                     entry = zis.nextEntry
                 }
             }
 
-            onProgress(100)
-            Log.d(TAG, "Модель '${model.name}' успешно установлена в $destDir")
+            zipFile.delete()
 
         } finally {
             conn.disconnect()

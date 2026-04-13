@@ -12,10 +12,12 @@ class DownloadsAdapter(
     private val items: List<ModelInfo>,
     private val installedStems: MutableSet<String>,
     private val onDownload: (ModelInfo) -> Unit,
-    private val onDelete: (ModelInfo) -> Unit
+    private val onDelete: (ModelInfo) -> Unit,
+
 ) : RecyclerView.Adapter<DownloadsAdapter.ViewHolder>() {
 
     private val progressMap = mutableMapOf<String, Int>()
+    private val installingSet = mutableSetOf<String>()
 
     inner class ViewHolder(root: View) : RecyclerView.ViewHolder(root) {
         val nameText: TextView       = root.findViewById(R.id.item_model_name)
@@ -36,7 +38,11 @@ class DownloadsAdapter(
 
             when {
                 stem in installedStems -> setInstalled(model)
+
+                model.file in installingSet -> setInstalling()
+
                 progress != null -> setDownloading(progress)
+
                 else -> setIdle(model)
             }
         }
@@ -69,9 +75,18 @@ class DownloadsAdapter(
         private fun setDownloading(progress: Int) {
             progressContainer.visibility = View.VISIBLE
             downloadBtn.visibility = View.GONE
-
+            progressBar.isIndeterminate = false
             progressBar.progress = progress
             progressText.text = "$progress%"
+        }
+
+        private fun setInstalling() {
+            progressContainer.visibility = View.VISIBLE
+            downloadBtn.visibility = View.GONE
+            deleteBtn.visibility = View.GONE
+
+            progressBar.isIndeterminate = true
+            progressText.text = "Установка"
         }
     }
 
@@ -88,8 +103,11 @@ class DownloadsAdapter(
     override fun getItemCount() = items.size
 
     fun updateProgress(file: String, progress: Int) {
+        installingSet.remove(file)
         progressMap[file] = progress
-        notifyItemChanged(items.indexOfFirst { it.file == file })
+
+        val index = items.indexOfFirst { it.file == file }
+        if (index != -1) notifyItemChanged(index)
     }
 
     fun markDone(file: String) {
@@ -100,5 +118,19 @@ class DownloadsAdapter(
     fun removeInstalled(file: String) {
         installedStems.remove(file.removeSuffix(".zip"))
         notifyItemChanged(items.indexOfFirst { it.file == file })
+    }
+
+    fun markInstalled(file: String) {
+        progressMap.remove(file)
+        installedStems.add(file.removeSuffix(".zip"))
+        notifyItemChanged(items.indexOfFirst { it.file == file })
+    }
+
+    fun setInstalling(file: String) {
+        progressMap.remove(file)
+        installingSet.add(file)
+
+        val index = items.indexOfFirst { it.file == file }
+        if (index != -1) notifyItemChanged(index)
     }
 }

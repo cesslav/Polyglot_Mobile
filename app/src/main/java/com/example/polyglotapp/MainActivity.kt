@@ -375,13 +375,18 @@ class MainActivity : AppCompatActivity() {
             try {
                 ModelDownloadManager.downloadAndExtract(
                     model = modelInfo,
-                    destDir = destDir,
-                    onProgress = { progress ->
-                        lifecycleScope.launch(Dispatchers.Main) {
+                    destDir = destDir
+                ) { progress, isInstalling ->
+
+                    lifecycleScope.launch(Dispatchers.Main) {
+
+                        if (isInstalling) {
+                            downloadsAdapter.setInstalling(modelInfo.file)
+                        } else if (progress != null) {
                             downloadsAdapter.updateProgress(modelInfo.file, progress)
                         }
                     }
-                )
+                }
 
                 withContext(Dispatchers.Main) {
                     downloadsAdapter.markDone(modelInfo.file)
@@ -400,6 +405,7 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+            downloadsAdapter.markInstalled(modelInfo.file)
         }
 
 
