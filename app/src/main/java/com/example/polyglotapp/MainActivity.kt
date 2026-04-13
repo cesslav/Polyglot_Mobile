@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private val installedModels = mutableListOf<Pair<String, String>>()
     private var selectedModelStem: String? = null
+    private lateinit var downloadsAdapter: DownloadsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -247,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         modelSpinner.visibility = View.VISIBLE
 
         val displayNames = installedModels.map { it.second }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, displayNames)
+        val adapter = ArrayAdapter(this, R.layout.spinner_list, displayNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         modelSpinner.onItemSelectedListener = null
@@ -322,8 +323,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Downloads screen ────────────────────────────────────────────────────
-
     private fun loadDownloadsList() {
         downloadsStatus.text = "Загрузка списка моделей…"
         downloadsList.adapter = null
@@ -333,7 +332,7 @@ class MainActivity : AppCompatActivity() {
                 val serverModels = ModelDownloadManager.fetchModelList()
                 Log.d("Downloads", "$serverModels")
 
-                val installedStems = buildInstalledStems()
+                val installedStems = buildInstalledStems().toMutableSet()
 
                 withContext(Dispatchers.Main) {
                     downloadsStatus.text = if (serverModels.isEmpty()) {
@@ -341,11 +340,14 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         "Доступные модели:"
                     }
-                    downloadsList.adapter = DownloadsAdapter(
-                        items          = serverModels,
+                    downloadsAdapter = DownloadsAdapter(
+                        items = serverModels,
                         installedStems = installedStems,
-                        onDownload     = { modelInfo, holder -> startDownload(modelInfo, holder) }
+                        onDownload = ::startDownload,
+                        onDelete = ::deleteModel
                     )
+
+                    downloadsList.adapter = downloadsAdapter
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -365,39 +367,58 @@ class MainActivity : AppCompatActivity() {
         return stems
     }
 
-    private fun startDownload(modelInfo: ModelInfo, holder: DownloadsAdapter.ViewHolder) {
-        val stem    = modelInfo.file.removeSuffix(".zip")
+    private fun startDownload(modelInfo: ModelInfo) {
+        val stem = modelInfo.file.removeSuffix(".zip")
         val destDir = File(filesDir, stem).also { it.mkdirs() }
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 ModelDownloadManager.downloadAndExtract(
-                    model      = modelInfo,
-                    destDir    = destDir,
+                    model = modelInfo,
+                    destDir = destDir,
                     onProgress = { progress ->
                         lifecycleScope.launch(Dispatchers.Main) {
-                            holder.setDownloading(progress)
+                            downloadsAdapter.updateProgress(modelInfo.file, progress)
                         }
                     }
                 )
+
                 withContext(Dispatchers.Main) {
-                    holder.setDone()
-                    Toast.makeText(
-                        this@MainActivity,
+                    downloadsAdapter.markDone(modelInfo.file)
+                    Toast.makeText(this@MainActivity,
                         "Модель «${modelInfo.name}» установлена",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                 }
+
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    holder.setIdle()
-                    Toast.makeText(
-                        this@MainActivity,
+                    downloadsAdapter.markDone(modelInfo.file)
+                    Toast.makeText(this@MainActivity,
                         "Ошибка загрузки: ${e.message}",
                         Toast.LENGTH_LONG
                     ).show()
-                    Log.e("Downloads", "download failed: ${modelInfo.file}", e)
                 }
+            }
+        }
+
+
+    }
+
+    private fun deleteModel(modelInfo: ModelInfo) {
+        val stem = modelInfo.file.removeSuffix(".zip")
+        val dir = File(filesDir, stem)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            dir.deleteRecursively()
+
+            withContext(Dispatchers.Main) {
+                downloadsAdapter.removeInstalled(modelInfo.file)
+                Toast.makeText(
+                    this@MainActivity,
+                    "Модель удалена",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

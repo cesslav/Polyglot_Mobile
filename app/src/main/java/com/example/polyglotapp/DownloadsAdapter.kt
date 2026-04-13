@@ -10,47 +10,68 @@ import com.google.android.material.button.MaterialButton
 
 class DownloadsAdapter(
     private val items: List<ModelInfo>,
-    private val installedStems: Set<String>,
-    private val onDownload: (ModelInfo, ViewHolder) -> Unit
+    private val installedStems: MutableSet<String>,
+    private val onDownload: (ModelInfo) -> Unit,
+    private val onDelete: (ModelInfo) -> Unit
 ) : RecyclerView.Adapter<DownloadsAdapter.ViewHolder>() {
 
-    inner class ViewHolder(root: View) : RecyclerView.ViewHolder(root) {
-        val nameText:     TextView      = root.findViewById(R.id.item_model_name)
-        val sizeText:     TextView      = root.findViewById(R.id.item_model_size)
-        val downloadBtn:  MaterialButton = root.findViewById(R.id.item_download_btn)
-        val progressBar:  ProgressBar   = root.findViewById(R.id.item_progress)
-        val progressText: TextView      = root.findViewById(R.id.item_progress_text)
+    private val progressMap = mutableMapOf<String, Int>()
 
-        fun setInstalled() {
-            progressBar.visibility  = View.GONE
-            progressText.visibility = View.GONE
-            downloadBtn.visibility  = View.VISIBLE
-            downloadBtn.text        = "Готово ✓"
-            downloadBtn.isEnabled   = false
+    inner class ViewHolder(root: View) : RecyclerView.ViewHolder(root) {
+        val nameText: TextView       = root.findViewById(R.id.item_model_name)
+        val sizeText: TextView       = root.findViewById(R.id.item_model_size)
+        val downloadBtn: MaterialButton = root.findViewById(R.id.item_download_btn)
+        val progressBar: ProgressBar = root.findViewById(R.id.item_progress)
+        val progressText: TextView   = root.findViewById(R.id.item_progress_text)
+        val progressContainer: View = root.findViewById(R.id.item_progress_container)
+        val deleteBtn: MaterialButton = root.findViewById(R.id.item_delete_btn)
+
+
+        fun bind(model: ModelInfo) {
+            nameText.text = model.name
+            sizeText.text = "${model.size_mb} МБ"
+
+            val stem = model.file.removeSuffix(".zip")
+            val progress = progressMap[model.file]
+
+            when {
+                stem in installedStems -> setInstalled(model)
+                progress != null -> setDownloading(progress)
+                else -> setIdle(model)
+            }
         }
 
-        fun setIdle() {
-            progressBar.visibility  = View.GONE
-            progressText.visibility = View.GONE
-            downloadBtn.visibility  = View.VISIBLE
+        private fun setInstalled(model: ModelInfo) {
+            progressContainer.visibility = View.GONE
+
+            downloadBtn.visibility = View.GONE
+
+            deleteBtn.visibility = View.VISIBLE
+            deleteBtn.isEnabled = true
+
+            deleteBtn.setOnClickListener {
+                onDelete(model)
+            }
+        }
+
+        private fun setIdle(model: ModelInfo) {
+            progressContainer.visibility = View.GONE
+            downloadBtn.visibility = View.VISIBLE
             downloadBtn.text        = "Скачать"
             downloadBtn.isEnabled   = true
+
+            downloadBtn.setOnClickListener {
+                downloadBtn.isEnabled = false
+                onDownload(model)
+            }
         }
 
-        fun setDownloading(progress: Int) {
-            downloadBtn.visibility  = View.GONE
-            progressBar.visibility  = View.VISIBLE
-            progressText.visibility = View.VISIBLE
-            progressBar.progress    = progress
-            progressText.text       = "$progress%"
-        }
+        private fun setDownloading(progress: Int) {
+            progressContainer.visibility = View.VISIBLE
+            downloadBtn.visibility = View.GONE
 
-        fun setDone() {
-            progressBar.visibility  = View.GONE
-            progressText.visibility = View.GONE
-            downloadBtn.visibility  = View.VISIBLE
-            downloadBtn.text        = "Готово ✓"
-            downloadBtn.isEnabled   = false
+            progressBar.progress = progress
+            progressText.text = "$progress%"
         }
     }
 
@@ -61,21 +82,23 @@ class DownloadsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val model = items[position]
-        holder.nameText.text = model.name
-        holder.sizeText.text = "${model.size_mb} МБ"
-
-        val stem = model.file.removeSuffix(".zip")
-        if (stem in installedStems) {
-            holder.setInstalled()
-        } else {
-            holder.setIdle()
-            holder.downloadBtn.setOnClickListener {
-                holder.downloadBtn.isEnabled = false
-                onDownload(model, holder)
-            }
-        }
+        holder.bind(items[position])
     }
 
     override fun getItemCount() = items.size
+
+    fun updateProgress(file: String, progress: Int) {
+        progressMap[file] = progress
+        notifyItemChanged(items.indexOfFirst { it.file == file })
+    }
+
+    fun markDone(file: String) {
+        progressMap.remove(file)
+        notifyItemChanged(items.indexOfFirst { it.file == file })
+    }
+
+    fun removeInstalled(file: String) {
+        installedStems.remove(file.removeSuffix(".zip"))
+        notifyItemChanged(items.indexOfFirst { it.file == file })
+    }
 }
