@@ -1,5 +1,5 @@
 package com.example.polyglotapp
-
+// This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

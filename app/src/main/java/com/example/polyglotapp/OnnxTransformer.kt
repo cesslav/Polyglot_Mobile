@@ -1,5 +1,5 @@
 package com.example.polyglotapp
-
+// This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession

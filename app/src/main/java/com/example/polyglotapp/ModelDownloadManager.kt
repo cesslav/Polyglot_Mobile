@@ -1,5 +1,5 @@
 package com.example.polyglotapp
-
+// This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

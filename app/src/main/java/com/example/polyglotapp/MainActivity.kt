@@ -1,5 +1,5 @@
 package com.example.polyglotapp
-
+// This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("LICENSE", "// This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.")
         setContentView(R.layout.layout)
 
         modelSpinner         = findViewById(R.id.model_spinner)
@@ -330,7 +331,7 @@ class MainActivity : AppCompatActivity() {
             memory   = memory,
             srcLen   = maxSrcLen,
             modelDim = modelDim,
-            beamSize = 4,
+            beamSize = 1,
             maxLen   = 128,
             bosId    = tok.bosId.toLong(),
             eosId    = tok.eosId.toLong()
