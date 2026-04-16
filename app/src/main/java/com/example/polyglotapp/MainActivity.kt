@@ -128,15 +128,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    /**
-     * SeekBar progress → actual value mapping:
-     *   srcLen  : progress ∈ [0..7] → value = (progress + 1) * 64  → [64, 128, 192, 256, 320, 384, 448, 512]
-     *   maxLen  : progress ∈ [0..7] → value = (progress + 1) * 32  → [32,  64,  96, 128, 160, 192, 224, 256]
-     */
-    private fun srcLenFromProgress(p: Int) = (p + 1) * 64
-    private fun srcLenToProgress(v: Int)   = (v / 64 - 1).coerceIn(0, 7)
+    private fun srcLenFromProgress(p: Int) = (p + 1) * 32
+    private fun srcLenToProgress(v: Int)   = (v / 32 - 1).coerceIn(0, 15)
     private fun maxLenFromProgress(p: Int) = (p + 1) * 32
-    private fun maxLenToProgress(v: Int)   = (v / 32 - 1).coerceIn(0, 7)
+    private fun maxLenToProgress(v: Int)   = (v / 32 - 1).coerceIn(0, 15)
 
     private fun setupSettingsScreen() {
         seekbarSrcLen.progress = srcLenToProgress(maxSrcLen)
@@ -457,7 +452,7 @@ class MainActivity : AppCompatActivity() {
         private const val PREFS_NAME      = "polyglot_settings"
         private const val KEY_SRC_LEN     = "max_src_len"
         private const val KEY_MAX_LEN     = "max_len"
-        private const val DEFAULT_SRC_LEN = 256
-        private const val DEFAULT_MAX_LEN = 128
+        private const val DEFAULT_SRC_LEN = 512
+        private const val DEFAULT_MAX_LEN = 256
     }
 }
