@@ -11,9 +11,29 @@ import java.util.zip.ZipInputStream
 object ModelDownloadManager {
 
     private const val TAG      = "ModelDownloadManager"
-    const val BASE_URL         = "http://igorpet.ru:9100"
+    const val DEFAULT_BASE_URL = "http://igorpet.ru:9100"
+    var BASE_URL               = DEFAULT_BASE_URL
 
     private val gson = Gson()
+
+    fun ping(url: String): Boolean {
+        val conn = (URL("$url/ping").openConnection() as HttpURLConnection).apply {
+            connectTimeout = 5_000
+            readTimeout    = 5_000
+        }
+        return try {
+            conn.connect()
+            if (conn.responseCode != 200) return false
+            val body = conn.inputStream.bufferedReader().readText()
+            val map  = gson.fromJson(body, Map::class.java)
+            map["answer"] == "available"
+        } catch (e: Exception) {
+            Log.e(TAG, "ping($url) failed", e)
+            false
+        } finally {
+            conn.disconnect()
+        }
+    }
 
     fun fetchModelList(): List<ModelInfo> {
         val url  = URL("$BASE_URL/models")
@@ -78,8 +98,10 @@ object ModelDownloadManager {
                 var entry = zis.nextEntry
 
                 while (entry != null) {
-                    val outFile = File(destDir, entry.name)
-
+                    val outFile = File(destDir, entry.name).canonicalFile
+                    if (!outFile.startsWith(destDir.canonicalFile)) {
+                        throw SecurityException("Zip Slip detected: ${entry.name}")
+                    }
                     if (entry.isDirectory) {
                         outFile.mkdirs()
                     } else {

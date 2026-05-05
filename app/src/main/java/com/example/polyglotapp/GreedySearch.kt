@@ -1,5 +1,5 @@
 package com.example.polyglotapp
-
+// This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
 object GreedySearch {
 
     fun search(
@@ -9,7 +9,8 @@ object GreedySearch {
         modelDim: Int,
         maxLen: Int = 128,
         bosId: Long = 0L,
-        eosId: Long = 1L
+        eosId: Long = 1L,
+        onToken: ((tokens: LongArray, len: Int) -> Unit)? = null
     ): LongArray {
 
         val tokens = LongArray(maxLen)
@@ -39,6 +40,8 @@ object GreedySearch {
 
             tokens[curLen] = maxIdx.toLong()
             curLen++
+
+            onToken?.invoke(tokens, curLen)
 
             if (maxIdx.toLong() == eosId) {
                 return tokens.copyOf(curLen)

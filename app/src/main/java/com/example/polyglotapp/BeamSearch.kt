@@ -13,7 +13,8 @@ object BeamSearch {
         beamSize: Int = 4,
         maxLen: Int = 128,
         bosId: Long = 0L,
-        eosId: Long = 1L
+        eosId: Long = 1L,
+        onToken: ((tokens: LongArray, len: Int) -> Unit)? = null
     ): LongArray {
 
         var beams: List<Beam> = listOf(Beam(longArrayOf(bosId), 0f))
@@ -48,6 +49,9 @@ object BeamSearch {
             }
 
             beams = candidates.sortedByDescending { it.score }.take(beamSize)
+
+            val best = beams.first()
+            onToken?.invoke(best.tokens, best.tokens.size)
         }
 
         return beams.first().tokens

@@ -126,16 +126,14 @@ class UnigramTokenizer(context: Context, modelDir: File = context.filesDir) {
         return out
     }
 
-    fun decode(ids: LongArray, skipSpecial: Boolean = true): String {
+    fun decode(ids: LongArray, length: Int, skipSpecial: Boolean = true): String {
         val skip = if (skipSpecial) setOf(bosId, eosId, padId) else emptySet()
-
         val sb = StringBuilder()
-        for (id in ids) {
-            val intId = id.toInt()
+        for (i in 0 until length) {
+            val intId = ids[i].toInt()
             if (intId in skip || intId < 0 || intId >= idToToken.size) continue
             sb.append(idToToken[intId])
         }
-
         return sb.toString().replace('▁', ' ').trim()
     }
 

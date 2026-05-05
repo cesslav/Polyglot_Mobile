@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/light">
+    app:cardCornerRadius="10dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#0D0D0D"
+    app:strokeColor="@color/main"
+    app:strokeWidth="1.5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
-                android:textColor="@color/black"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:text="Название модели" />
 
@@ -35,9 +37,21 @@
                 android:id="@+id/item_model_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:textSize="12sp"
-                android:textColor="#555555"
+                android:textColor="#777777"
                 android:text="0 МБ" />
+
+            <TextView
+                android:id="@+id/item_model_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                android:textColor="#888888"
+                android:visibility="gone"
+                android:text="" />
 
         </LinearLayout>
 
@@ -52,10 +66,13 @@
                 android:id="@+id/item_download_btn"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:text="Скачать"
-                android:backgroundTint="#6441a5"
-                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:backgroundTint="@color/main"
+                app:cornerRadius="8dp"
                 android:visibility="visible" />
 
             <LinearLayout
@@ -72,14 +89,17 @@
                     android:layout_width="90dp"
                     android:layout_height="5dp"
                     android:max="100"
-                    android:progress="1" />
+                    android:progress="1"
+                    android:progressTint="@color/main"
+                    android:progressBackgroundTint="#333333" />
 
                 <TextView
                     android:id="@+id/item_progress_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:textSize="11sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/main"
                     android:text="0%" />
 
             </LinearLayout>
@@ -88,14 +108,16 @@
                 android:id="@+id/item_delete_btn"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:text="Удалить"
-                android:backgroundTint="#c0392b"
-                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#8B0000"
+                app:cornerRadius="8dp"
                 android:visibility="gone" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

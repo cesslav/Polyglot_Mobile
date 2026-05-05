@@ -10,4 +10,7 @@
     <color name="dark">#AAA</color>
     <color name="light">#EEE</color>
     <color name="primary">#6441a5</color>
+    <color name="main">#5cb84b</color>
+    <color name="secondary">#1F3A1F</color>
+    <color name="red">#b84848</color>
 </resources>

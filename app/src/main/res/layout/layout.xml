@@ -6,106 +6,149 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#6441a5"
+    android:background="#000000"
     tools:context=".MainActivity">
 
-    <TextView
+    <!--TextView
         android:id="@+id/main_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:letterSpacing="0.08"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:text="Полиглот"
-        android:textSize="30sp"
-        android:textColor="@color/black"
+        android:textColor="@color/main"
+        android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="152dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <!-- android:paddingTop="28dp" -->
 
-    <!--app:layout_constraintBottom_toTopOf="@+id/input_text"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/main_label"-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/polylogo"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true" />
+
+    </LinearLayout>
 
     <Spinner
         android:id="@+id/model_spinner"
         android:layout_width="350dp"
-        android:layout_height="50dp"
-        android:background="@color/light"
-        android:paddingHorizontal="8dp"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_spinner"
+        android:paddingHorizontal="4dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.65"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <EditText
         android:id="@+id/input_text"
         android:layout_width="350dp"
-        android:layout_height="100dp"
-        android:background="@color/light"
-        android:ems="10"
-        android:scrollbars="vertical"
-        android:imeOptions="flagNoEnterAction"
+        android:layout_height="110dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_neon_input"
         android:hint="Введите текст для перевода..."
+        android:imeOptions="flagNoEnterAction"
         android:inputType="textMultiLine"
-        android:textColor="@color/black"
-        android:textStyle="bold|italic"
+        android:scrollbars="vertical"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#999999"
         android:textSize="15sp"
-        android:textColorHint="#666666"
+        android:textStyle="normal"
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp"
         android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_label"
-        app:layout_constraintBottom_toTopOf="@+id/button"/>
+        app:layout_constraintTop_toBottomOf="@+id/header" />
+
+    <TextView
+        android:id="@+id/input_char_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/256"
+        android:textColor="#777777"
+        android:textSize="11sp"
+        android:paddingEnd="8dp"
+        android:paddingTop="5dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/input_text"
+        app:layout_constraintEnd_toEndOf="@+id/input_text" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/light"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/main"
         android:text="Перевести"
-        android:textColor="@color/black"
+        android:textColor="#000000"
+        android:textSize="15sp"
         android:visibility="visible"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/output_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/light"
-        app:strokeWidth="2dp"
         app:layout_constraintTop_toBottomOf="@+id/input_text"
-        app:layout_constraintBottom_toTopOf="@+id/output_text"/>
+        app:strokeColor="@color/main"
+        app:strokeWidth="0dp" />
 
     <TextView
         android:id="@+id/output_text"
         android:layout_width="350dp"
-        android:layout_height="100dp"
-        android:background="@color/light"
+        android:layout_height="110dp"
+        android:background="@drawable/bg_neon_input"
         android:hint="Здесь появится перевод Вашего текста."
-        android:textColor="@color/black"
-        android:textColorHint="#666666"
-        android:textStyle="bold|italic"
+        android:scrollbars="vertical"
+        android:padding="10dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#999999"
         android:textSize="15sp"
+        android:textStyle="normal"
         android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/model_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:layout_constraintBottom_toTopOf="@+id/model_spinner"/>
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <TextView
         android:id="@+id/downloads_status"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="@color/black"
+        android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:visibility="gone"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_label"
+        app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintBottom_toTopOf="@+id/downloads_list"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -113,23 +156,24 @@
         android:id="@+id/downloads_list"
         android:layout_width="350dp"
         android:layout_height="0dp"
-        android:visibility="gone"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/downloads_status"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/translate_menu_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/downloads_status" />
 
-    <LinearLayout
+    <ScrollView
         android:id="@+id/settings_container"
         android:layout_width="350dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:visibility="gone"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/main_label"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintBottom_toTopOf="@+id/translate_menu_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -137,189 +181,359 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/light"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <!--LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:background="@drawable/bg_warning_card"
+                android:padding="14dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠"
+                    android:textColor="@color/red"
+                    android:textSize="22sp"
+                    android:layout_marginEnd="10dp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Длина входного тензора"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:text="Пожалуйста, меняйте настройки только если Вы знаете что делаете, это может привести к ухудшению качества перевода!"
+                    android:textColor="#FF6666"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout-->
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_neon_card"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Длина входного текста"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/setting_src_len_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="256"
+                        android:textColor="@color/main"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:minWidth="48dp"
+                        android:gravity="end" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekbar_src_len"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:progressTint="@color/main"
+                    android:thumbTint="@color/main"
+                    android:progressBackgroundTint="#555555"
+                    android:max="15" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="64"
+                        android:textColor="#999999"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1024"
+                        android:textColor="#999999"
+                        android:textSize="11sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/setting_src_len_value"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="256"
-                    android:textColor="@color/black"
+                    android:layout_marginTop="8dp"
+                    android:text="Максимальная длина входной последовательности в символах. Большее значение позволяет переводить более длинные тексты, но увеличивает использование памяти."
+                    android:textColor="#888888"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_neon_card"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Длина выходного текста"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/setting_max_len_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="128"
+                        android:textColor="@color/main"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:minWidth="48dp"
+                        android:gravity="end" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekbar_max_len"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:progressTint="@color/main"
+                    android:thumbTint="@color/main"
+                    android:progressBackgroundTint="#555555"
+                    android:max="15" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="64"
+                        android:textColor="#999999"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1024"
+                        android:textColor="#999999"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Максимальная длина генерируемого перевода в символах."
+                    android:textColor="#888888"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_neon_card"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Адрес сервера"
+                    android:textColor="@color/main"
                     android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:minWidth="40dp"
-                    android:gravity="end" />
-            </LinearLayout>
+                    android:textStyle="bold" />
 
-            <SeekBar
-                android:id="@+id/seekbar_src_len"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:max="15" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
+                    <EditText
+                        android:id="@+id/setting_server_url"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:inputType="textUri"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:textColorHint="#999999"
+                        android:background="@drawable/bg_neon_input"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/setting_server_url_button"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="48dp"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="8dp"
+                        android:text="✓"
+                        android:textSize="18sp"
+                        android:backgroundTint="@color/main"
+                        android:textColor="#000000"
+                        android:minWidth="0dp"
+                        android:paddingHorizontal="4dp"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="32"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="512"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    android:layout_marginTop="6dp"
+                    android:text="Адрес будет проверен перед сохранением."
+                    android:textColor="#888888"
+                    android:textSize="12sp" />
             </LinearLayout>
 
-            <TextView
+            <!--LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Максимальная длина входной последовательности токенов. Большее значение позволяет переводить длинные тексты, но увеличивает использование памяти."
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:alpha="0.7" />
+                android:orientation="vertical"
+                android:background="@drawable/bg_neon_card"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Потоковый вывод"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/setting_streaming_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/main"
+                        android:checked="true"
+                        style="@style/Theme.PolyglotApp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Отображать перевод по мере генерации текста. При отключении перевод появится целиком после завершения обработки."
+                    android:textColor="#888888"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout-->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/setting_reset_button"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="Сбросить до заводских настроек"
+                android:textColor="@color/main"
+                android:textStyle="bold"
+                app:strokeColor="@color/main"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="10dp"
+                android:textSize="12sp"/>
+
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/light"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Длина выходного тензора"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/setting_max_len_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="128"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:minWidth="40dp"
-                    android:gravity="end" />
-            </LinearLayout>
-
-            <SeekBar
-                android:id="@+id/seekbar_max_len"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:max="15" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="32"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="512"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Максимальная длина генерируемого перевода в токенах. При достижении лимита генерация останавливается."
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:alpha="0.7" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/translate_menu_button"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
         style="@style/Widget.MaterialComponents.Button"
-        android:text="перевод"
-        android:backgroundTint="@color/dark"
-        android:textColor="@color/black"
-        app:strokeColor="@color/black"
-        app:strokeWidth="2dp"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:text="Перевод"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:backgroundTint="#1A1A1A"
+        android:textColor="#FFFFFF"
+        app:strokeColor="@color/main"
+        app:strokeWidth="1dp"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/settings_menu_button"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
-        style="@style/Widget.MaterialComponents.Button"
-        android:text="настройки"
-        android:backgroundTint="@color/light"
-        android:textColor="@color/black"
-        app:strokeColor="@color/black"
-        app:strokeWidth="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/downloads_menu_button" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/downloads_menu_button"
         style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="130dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/light"
-        android:text="загрузки"
-        android:textColor="@color/black"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:text="Загрузки"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:backgroundTint="#1A1A1A"
+        android:textColor="#FFFFFF"
+        app:strokeColor="@color/main"
+        app:strokeWidth="1dp"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/settings_menu_button"
         app:layout_constraintStart_toEndOf="@+id/translate_menu_button"
-        app:strokeColor="@color/black"
-        app:strokeWidth="2dp" />
+        app:layout_constraintEnd_toStartOf="@+id/settings_menu_button" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_menu_button"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:text="Настройки"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:backgroundTint="#1A1A1A"
+        android:textColor="#FFFFFF"
+        app:strokeColor="@color/main"
+        app:strokeWidth="1dp"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/downloads_menu_button"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

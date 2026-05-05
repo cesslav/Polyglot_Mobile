@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.PolyglotApp" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.PolyglotApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="trackTint">@drawable/selector_switch_thumb</item>
+        <item name="thumbTint">@color/main</item>
+        <item name="colorPrimary">@color/main</item>
+        <item name="colorSecondary">@color/main</item>
+        <item name="colorSurface">@color/black</item>
+        <item name="bottomSheetDialogTheme">@color/black</item>
+    </style>
+    <style name="CustomDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitleTextStyle">@style/NeonDialog.Title</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+
+    <style name="NeonDialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/main</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
