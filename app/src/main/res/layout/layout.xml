@@ -9,20 +9,6 @@
     android:background="#000000"
     tools:context=".MainActivity">
 
-    <!--TextView
-        android:id="@+id/main_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:letterSpacing="0.08"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:text="Полиглот"
-        android:textColor="@color/main"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
@@ -35,7 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <!-- android:paddingTop="28dp" -->
 
         <ImageView
             android:layout_width="wrap_content"
@@ -89,7 +74,7 @@
         android:id="@+id/input_char_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0/256"
+        android:text="0/2000"
         android:textColor="#777777"
         android:textSize="11sp"
         android:paddingEnd="8dp"
@@ -124,6 +109,7 @@
         android:background="@drawable/bg_neon_input"
         android:hint="Здесь появится перевод Вашего текста."
         android:scrollbars="vertical"
+        android:textIsSelectable="true"
         android:padding="10dp"
         android:textColor="#FFFFFF"
         android:textColorHint="#999999"
@@ -136,42 +122,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
-    <TextView
-        android:id="@+id/downloads_status"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header"
-        app:layout_constraintBottom_toTopOf="@+id/downloads_list"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/downloads_list"
-        android:layout_width="350dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/translate_menu_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/downloads_status" />
-
-    <ScrollView
-        android:id="@+id/settings_container"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/downloads_container"
         android:layout_width="350dp"
         android:layout_height="0dp"
         android:visibility="gone"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:scrollbars="none"
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintBottom_toTopOf="@+id/translate_menu_button"
@@ -183,34 +138,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--LinearLayout
+            <TextView
+                android:id="@+id/downloads_connection_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_warning_card"
-                android:padding="14dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="14dp">
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:lineSpacingExtra="2dp"
+                android:background="@drawable/bg_neon_card"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="6dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="⚠"
-                    android:textColor="@color/red"
-                    android:textSize="22sp"
-                    android:layout_marginEnd="10dp" />
+            <TextView
+                android:id="@+id/downloads_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:lineSpacingExtra="2dp"
+                android:background="@drawable/bg_neon_card"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="6dp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Пожалуйста, меняйте настройки только если Вы знаете что делаете, это может привести к ухудшению качества перевода!"
-                    android:textColor="#FF6666"
-                    android:textSize="13sp"
-                    android:lineSpacingExtra="2dp" />
-            </LinearLayout-->
-
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/downloads_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="4dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -218,174 +177,23 @@
                 android:orientation="vertical"
                 android:background="@drawable/bg_neon_card"
                 android:padding="14dp"
-                android:layout_marginBottom="14dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Длина входного текста"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/setting_src_len_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="256"
-                        android:textColor="@color/main"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:minWidth="48dp"
-                        android:gravity="end" />
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/seekbar_src_len"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:progressTint="@color/main"
-                    android:thumbTint="@color/main"
-                    android:progressBackgroundTint="#555555"
-                    android:max="15" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="64"
-                        android:textColor="#999999"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1024"
-                        android:textColor="#999999"
-                        android:textSize="11sp" />
-                </LinearLayout>
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Максимальная длина входной последовательности в символах. Большее значение позволяет переводить более длинные тексты, но увеличивает использование памяти."
-                    android:textColor="#888888"
-                    android:textSize="12sp"
-                    android:lineSpacingExtra="2dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_neon_card"
-                android:padding="14dp"
-                android:layout_marginBottom="14dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Длина выходного текста"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/setting_max_len_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="128"
-                        android:textColor="@color/main"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:minWidth="48dp"
-                        android:gravity="end" />
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/seekbar_max_len"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:progressTint="@color/main"
-                    android:thumbTint="@color/main"
-                    android:progressBackgroundTint="#555555"
-                    android:max="15" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="64"
-                        android:textColor="#999999"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1024"
-                        android:textColor="#999999"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Максимальная длина генерируемого перевода в символах."
-                    android:textColor="#888888"
-                    android:textSize="12sp"
-                    android:lineSpacingExtra="2dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_neon_card"
-                android:padding="14dp"
-                android:layout_marginBottom="14dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Адрес сервера"
+                    android:text="Адрес сервера загрузок"
                     android:textColor="@color/main"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="10dp">
+                    android:gravity="center_vertical">
 
                     <EditText
                         android:id="@+id/setting_server_url"
@@ -421,66 +229,116 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Адрес будет проверен перед сохранением."
                     android:textColor="#888888"
                     android:textSize="12sp" />
-            </LinearLayout>
 
-            <!--LinearLayout
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/setting_reset_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:text="Сбросить адрес сервера"
+                    android:textColor="@color/main"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    app:strokeColor="@color/main"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="8dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <ScrollView
+        android:id="@+id/settings_container"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintBottom_toTopOf="@+id/translate_menu_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_neon_card"
+                android:background="@drawable/bg_neon_input"
                 android:padding="14dp"
-                android:layout_marginBottom="14dp">
+                android:text="«Полиглот» — это open-source платформа для перевода, которая превращает пользователей в соавторов продукта. В отличие от закрытых решений, таких как Google Translate, проект позволяет создавать и адаптировать перевод под конкретные задачи, формируя экосистему языковых решений. За счёт open-source модели «Полиглот» имеет потенциал масштабироваться через сообщество и стать инфраструктурным стандартом в области перевода."
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="20dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Потоковый вывод"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/setting_streaming_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/main"
-                        android:checked="true"
-                        style="@style/Theme.PolyglotApp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Отображать перевод по мере генерации текста. При отключении перевод появится целиком после завершения обработки."
-                    android:textColor="#888888"
-                    android:textSize="12sp"
-                    android:lineSpacingExtra="2dp" />
-            </LinearLayout-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Для пользователей"
+                android:textColor="@color/main"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/setting_reset_button"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/about_website_button"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="Сбросить до заводских настроек"
-                android:textColor="@color/main"
+                android:backgroundTint="@color/main"
+                android:text="Сайт проекта"
+                android:textColor="#000000"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                app:strokeColor="@color/main"
-                app:strokeWidth="1.5dp"
+                android:layout_marginBottom="20dp"
                 app:cornerRadius="10dp"
-                android:textSize="12sp"/>
+                app:strokeWidth="0dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Для разработчиков "
+                android:textColor="@color/main"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/about_app_repo_button"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/main"
+                android:text="Репозиторий приложения"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                app:cornerRadius="10dp"
+                app:strokeWidth="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/about_tools_repo_button"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/main"
+                android:text="Инструментарий разработки"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"
+                app:cornerRadius="10dp"
+                app:strokeWidth="0dp" />
 
         </LinearLayout>
     </ScrollView>
@@ -524,7 +382,7 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:text="Настройки"
+        android:text="О проекте"
         android:textSize="12sp"
         android:textStyle="bold"
         android:backgroundTint="#1A1A1A"

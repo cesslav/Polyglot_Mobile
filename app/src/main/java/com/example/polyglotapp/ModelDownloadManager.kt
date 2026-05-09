@@ -18,8 +18,8 @@ object ModelDownloadManager {
 
     fun ping(url: String): Boolean {
         val conn = (URL("$url/ping").openConnection() as HttpURLConnection).apply {
-            connectTimeout = 5_000
-            readTimeout    = 5_000
+            connectTimeout = 10_000
+            readTimeout    = 10_000
         }
         return try {
             conn.connect()
@@ -38,8 +38,8 @@ object ModelDownloadManager {
     fun fetchModelList(): List<ModelInfo> {
         val url  = URL("$BASE_URL/models")
         val conn = url.openConnection() as HttpURLConnection
-        conn.connectTimeout = 30_000
-        conn.readTimeout    = 30_000
+        conn.connectTimeout = 10_000
+        conn.readTimeout    = 10_000
         try {
             conn.connect()
             check(conn.responseCode == 200) {

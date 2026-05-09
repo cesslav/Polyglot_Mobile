@@ -1,6 +1,5 @@
 package com.example.polyglotapp
 // This file is distributed under the open license AGPLv3, source code: https://github.com/cesslav/Polyglot_Mobile.
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,16 +13,14 @@ class DownloadsAdapter(
     private val installedStems: MutableSet<String>,
     private val onDownload: (ModelInfo) -> Unit,
     private val onDelete: (ModelInfo) -> Unit,
-    private val ramGb: Double = 0.0,
 ) : RecyclerView.Adapter<DownloadsAdapter.ViewHolder>() {
 
-    private val progressMap = mutableMapOf<String, Int>()
+    private val progressMap   = mutableMapOf<String, Int>()
     private val installingSet = mutableSetOf<String>()
 
     inner class ViewHolder(root: View) : RecyclerView.ViewHolder(root) {
         val nameText: TextView          = root.findViewById(R.id.item_model_name)
         val sizeText: TextView          = root.findViewById(R.id.item_model_size)
-        val hintText: TextView          = root.findViewById(R.id.item_model_hint)
         val downloadBtn: MaterialButton = root.findViewById(R.id.item_download_btn)
         val progressBar: ProgressBar    = root.findViewById(R.id.item_progress)
         val progressText: TextView      = root.findViewById(R.id.item_progress_text)
@@ -34,54 +31,14 @@ class DownloadsAdapter(
             nameText.text = model.name
             sizeText.text = "${model.size_mb} МБ"
 
-            bindCompatibilityHint(model)
-
             val stem     = model.file.removeSuffix(".zip")
             val progress = progressMap[model.file]
 
             when {
-                stem in installedStems    -> setInstalled(model)
+                stem in installedStems      -> setInstalled(model)
                 model.file in installingSet -> setInstalling()
-                progress != null          -> setDownloading(progress)
-                else                      -> setIdle(model)
-            }
-        }
-
-        private fun bindCompatibilityHint(model: ModelInfo) {
-            data class HintStyle(val text: String, val color: Int)
-
-            val hint: HintStyle? = when {
-                ramGb > 3 -> HintStyle(
-                    "подходит для использования на Вашем устройстве",
-                    Color.parseColor("#5cb84b")
-                )
-                ramGb <= 2.0 -> when {
-                    model.size_mb > 1024 -> HintStyle(
-                        "не рекомендуется для использования на Вашем устройстве",
-                        Color.parseColor("#FF4444")
-                    )
-                    model.size_mb > 512  -> HintStyle(
-                        "может потребовать ограничения ввода/вывода",
-                        Color.parseColor("#FFA500")
-                    )
-                    else -> null
-                }
-                ramGb < 3.0 -> when {
-                    model.size_mb > 1024 -> HintStyle(
-                        "может потребовать ограничения ввода/вывода",
-                        Color.parseColor("#FFA500")
-                    )
-                    else -> null
-                }
-                else -> null
-            }
-
-            if (hint != null) {
-                hintText.text      = hint.text
-                hintText.setTextColor(hint.color)
-                hintText.visibility = View.VISIBLE
-            } else {
-                hintText.visibility = View.GONE
+                progress != null            -> setDownloading(progress)
+                else                        -> setIdle(model)
             }
         }
 
@@ -128,10 +85,7 @@ class DownloadsAdapter(
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(items[position])
     override fun getItemCount() = items.size
 
     fun updateProgress(file: String, progress: Int) {
