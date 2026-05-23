@@ -684,6 +684,6 @@ class MainActivity : AppCompatActivity() {
         const val MAX_CHAR_INPUT = 2000
         const val MAX_OUTPUT_LEN = 128
 
-        val TOKEN_LEN_STEPS = intArrayOf(32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640, 672, 704, 736, 768)
+        val TOKEN_LEN_STEPS = intArrayOf(128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640, 672, 704, 736, 768)
     }
 }
