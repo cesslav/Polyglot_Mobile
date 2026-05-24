@@ -9,17 +9,13 @@ import java.nio.FloatBuffer
 import java.nio.LongBuffer
 
 class OnnxTransformer(context: Context, modelDir: File = context.filesDir) {
-
     private val env: OrtEnvironment = OrtEnvironment.getEnvironment()
     private val encoder: OrtSession
     private val decoder: OrtSession
-
     init {
         val opts = OrtSession.SessionOptions()
-
         val encFile = resolveFile(context, modelDir, "encoder.onnx")
         val decFile = resolveFile(context, modelDir, "decoder.onnx")
-
         encoder = env.createSession(encFile.absolutePath, opts)
         decoder = env.createSession(decFile.absolutePath, opts)
     }
