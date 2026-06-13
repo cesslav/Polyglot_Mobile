@@ -4,6 +4,7 @@ object GreedySearch {
     fun search(
         model: OnnxTransformer,
         memory: FloatArray,
+        srcMask: BooleanArray,
         srcLen: Int,
         modelDim: Int,
         maxLen: Int = 128,
@@ -18,10 +19,11 @@ object GreedySearch {
 
         repeat(maxLen - 1) {
             val logits = model.decode(
-                tokens.copyOf(curLen),
-                memory,
-                srcLen,
-                modelDim
+                tgtTokens = tokens.copyOf(curLen),
+                memory = memory,
+                srcMask = srcMask,
+                srcLen = srcLen,
+                modelDim = modelDim
             )
 
             val vocabSize = logits.size / curLen

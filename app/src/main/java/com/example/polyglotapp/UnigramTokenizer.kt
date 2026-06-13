@@ -108,7 +108,7 @@ class UnigramTokenizer(context: Context, modelDir: File = context.filesDir) {
             .map { "▁$it" }
     }
 
-    fun encode(text: String, maxLength: Int = 256): LongArray {
+    fun encode(text: String, maxLength: Int = MAX_SRC_LEN): LongArray {
         val tokens = ArrayList<Int>(maxLength)
         tokens.add(bosId)
         for (piece in pretokenize(text)) {
@@ -136,5 +136,6 @@ class UnigramTokenizer(context: Context, modelDir: File = context.filesDir) {
     companion object {
         private const val TAG = "UnigramTokenizer"
         private const val MAX_TOKEN_LEN = 32
+        const val MAX_SRC_LEN = 512
     }
 }

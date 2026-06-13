@@ -33,15 +33,24 @@ class OnnxTransformer(context: Context, modelDir: File = context.filesDir) {
         return tmp
     }
 
-    fun encode(srcTokens: LongArray, seqLen: Int): FloatArray {
-        val tensor = OnnxTensor.createTensor(
+    fun encode(srcTokens: LongArray, srcMask: BooleanArray): FloatArray {
+        val seqLen = srcTokens.size
+
+        val srcTensor = OnnxTensor.createTensor(
             env,
             LongBuffer.wrap(srcTokens),
             longArrayOf(1L, seqLen.toLong())
         )
-        return tensor.use {
-            encoder.run(mapOf("src" to tensor)).use { out ->
-                (out[0] as OnnxTensor).toFloatArray()
+        val maskTensor = OnnxTensor.createTensor(
+            env,
+            Array(1) { srcMask }
+        )
+
+        return srcTensor.use {
+            maskTensor.use {
+                encoder.run(mapOf("src" to srcTensor, "src_mask" to maskTensor)).use { out ->
+                    (out[0] as OnnxTensor).toFloatArray()
+                }
             }
         }
     }
@@ -49,6 +58,7 @@ class OnnxTransformer(context: Context, modelDir: File = context.filesDir) {
     fun decode(
         tgtTokens: LongArray,
         memory: FloatArray,
+        srcMask: BooleanArray,
         srcLen: Int,
         modelDim: Int
     ): FloatArray {
@@ -64,11 +74,19 @@ class OnnxTransformer(context: Context, modelDir: File = context.filesDir) {
             FloatBuffer.wrap(memory),
             longArrayOf(1L, srcLen.toLong(), modelDim.toLong())
         )
+        val maskTensor = OnnxTensor.createTensor(
+            env,
+            Array(1) { srcMask }
+        )
 
         return tgtTensor.use {
             memTensor.use {
-                decoder.run(mapOf("tgt" to tgtTensor, "memory" to memTensor)).use { out ->
-                    (out[0] as OnnxTensor).toFloatArray()
+                maskTensor.use {
+                    decoder.run(
+                        mapOf("tgt" to tgtTensor, "memory" to memTensor, "src_mask" to maskTensor)
+                    ).use { out ->
+                        (out[0] as OnnxTensor).toFloatArray()
+                    }
                 }
             }
         }

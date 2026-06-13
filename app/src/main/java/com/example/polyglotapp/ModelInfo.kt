@@ -3,5 +3,8 @@ package com.example.polyglotapp
 data class ModelInfo(
     val name: String,
     val file: String,
-    val size_mb: Int
+    val size_mb: Int,
+    val input_language: String = "",
+    val output_language: String = "",
+    val bidirectional: Boolean = false,
 )

@@ -39,6 +39,7 @@ import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -57,7 +58,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var runButton: MaterialButton
     private lateinit var outputText: TextView
     private lateinit var header: LinearLayout
-
     private lateinit var translateMenuButton: MaterialButton
     private lateinit var downloadsMenuButton: MaterialButton
     private lateinit var settingsMenuButton: MaterialButton
@@ -104,7 +104,6 @@ class MainActivity : AppCompatActivity() {
     private var colorDark: Int = 0
     private var colorBlack: Int = 0
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i("LICENSE",
@@ -127,11 +126,9 @@ class MainActivity : AppCompatActivity() {
         runButton = findViewById(R.id.button)
         outputText = findViewById(R.id.output_text)
         header = findViewById(R.id.header)
-
         translateMenuButton = findViewById(R.id.translate_menu_button)
         downloadsMenuButton = findViewById(R.id.downloads_menu_button)
         settingsMenuButton = findViewById(R.id.settings_menu_button)
-
         downloadsContainer = findViewById(R.id.downloads_container)
         downloadsList = findViewById(R.id.downloads_list)
         downloadsConnectionStatus = findViewById(R.id.downloads_connection_status)
@@ -139,19 +136,15 @@ class MainActivity : AppCompatActivity() {
         settingServerUrl = findViewById(R.id.setting_server_url)
         settingServerButton = findViewById(R.id.setting_server_url_button)
         settingResetButton = findViewById(R.id.setting_reset_button)
-
         settingsContainer = findViewById(R.id.settings_container)
         aboutWebsiteButton = findViewById(R.id.about_website_button)
         aboutAppRepoButton = findViewById(R.id.about_app_repo_button)
         aboutToolsRepoButton = findViewById(R.id.about_tools_repo_button)
 
         downloadsList.layoutManager = LinearLayoutManager(this)
-
         applySystemBarInsets()
-
         runButton.isEnabled = false
         modelSpinner.isEnabled = false
-
         setupAboutScreen()
         setupDownloadsServerSection()
         setupInputCounter()
@@ -164,15 +157,12 @@ class MainActivity : AppCompatActivity() {
             if (!isReady) return@setOnClickListener
             val text = inputEdit.text.toString().trim()
             if (text.isEmpty()) return@setOnClickListener
-
             runButton.isEnabled = false
             modelSpinner.isEnabled = false
             outputText.text = "Обрабатывается…"
-
             val wakeLock = (getSystemService(POWER_SERVICE) as PowerManager)
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_INFERENCE_TAG)
             wakeLock.acquire(WAKELOCK_INFERENCE_TIMEOUT_MS)
-
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     val onPartial: (String) -> Unit = { partial ->
@@ -192,7 +182,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         showTranslateScreen()
     }
 
@@ -222,7 +211,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateServiceCallbacks() {
         val svc = downloadService ?: return
-
         svc.onProgress = { file, progress, isInstalling ->
             runOnUiThread {
                 if (::downloadsAdapter.isInitialized) {
@@ -231,7 +219,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         svc.onComplete = { file, success, error ->
             runOnUiThread {
                 if (::downloadsAdapter.isInitialized) {
@@ -257,7 +244,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun applySystemBarInsets() {
         val rootView = findViewById<ConstraintLayout>(R.id.main)
         val labelPadTop = header.paddingTop
@@ -270,7 +256,6 @@ class MainActivity : AppCompatActivity() {
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
 
             header.setPadding(labelPadStart, labelPadTop + statusBar.top, labelPadEnd, labelPadBot)
-
             for (btn in listOf(translateMenuButton, downloadsMenuButton, settingsMenuButton)) {
                 (btn.layoutParams as ConstraintLayout.LayoutParams).apply {
                     bottomMargin = navBar.bottom
@@ -286,7 +271,7 @@ class MainActivity : AppCompatActivity() {
         updateCharCounter(inputEdit.text.length)
         inputEdit.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int)     = Unit
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable) { updateCharCounter(s.length) }
         })
     }
@@ -319,7 +304,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDownloadsServerSection() {
         settingServerUrl.hint = ModelDownloadManager.BASE_URL
-
         settingServerUrl.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val raw = settingServerUrl.text.toString()
@@ -332,17 +316,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         settingServerButton.setOnClickListener {
             val raw = settingServerUrl.text.toString().trimEnd('/')
             val normalized = if (raw.isEmpty()) "" else normalizeServerUrl(raw)
             if (normalized.isEmpty()) return@setOnClickListener
-
             if (normalized != raw) {
                 settingServerUrl.setText(normalized)
                 settingServerUrl.setSelection(normalized.length)
             }
-
             settingServerButton.isEnabled = false
             lifecycleScope.launch(Dispatchers.IO) {
                 val ok = ModelDownloadManager.ping(normalized)
@@ -360,7 +341,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         settingResetButton.setOnClickListener {
             val dialog = AlertDialog.Builder(this, R.style.CustomDialog)
                 .setTitle("Сброс адреса сервера")
@@ -373,11 +353,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("Отмена", null)
                 .show()
-
             dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(colorWhite)
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(colorMain)
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(colorMain)
-
             val dp2 = (2 * resources.displayMetrics.density).toInt()
             val dp24 = (24 * resources.displayMetrics.density).toInt()
             val bg = GradientDrawable().apply {
@@ -392,7 +370,6 @@ class MainActivity : AppCompatActivity() {
         var url = raw.trim().trimEnd('/')
         if (url.isEmpty()) return url
         if (!url.startsWith("http://") && !url.startsWith("https://")) url = "http://$url"
-
         val protocolEnd = url.indexOf("://") + 3
         val afterProtocol = url.substring(protocolEnd)
         val slashIdx = afterProtocol.indexOf('/')
@@ -406,7 +383,6 @@ class MainActivity : AppCompatActivity() {
         button.backgroundTintList = ColorStateList.valueOf(colorSecondary)
         button.setTextColor(colorMain)
     }
-
     private fun setNavInactive(button: MaterialButton) {
         button.backgroundTintList = ColorStateList.valueOf(colorBlack)
         button.setTextColor(colorWhite)
@@ -416,40 +392,32 @@ class MainActivity : AppCompatActivity() {
         setNavActive(translateMenuButton)
         setNavInactive(settingsMenuButton)
         setNavInactive(downloadsMenuButton)
-
         downloadsContainer.visibility = View.GONE
         settingsContainer.visibility = View.GONE
-
         inputEdit.visibility = View.VISIBLE
         inputCharCounter.visibility = View.VISIBLE
         runButton.visibility = View.VISIBLE
         outputText.visibility = View.VISIBLE
         modelSpinner.visibility = View.VISIBLE
-
         updateCharCounter(inputEdit.text.length)
         refreshSpinner()
     }
-
     private fun showAboutScreen() {
         setNavInactive(translateMenuButton)
         setNavActive(settingsMenuButton)
         setNavInactive(downloadsMenuButton)
-
         modelSpinner.visibility = View.GONE
         inputEdit.visibility = View.GONE
         inputCharCounter.visibility = View.GONE
         runButton.visibility = View.GONE
         outputText.visibility = View.GONE
         downloadsContainer.visibility = View.GONE
-
         settingsContainer.visibility = View.VISIBLE
     }
-
     private fun showDownloadsScreen() {
         setNavInactive(translateMenuButton)
         setNavInactive(settingsMenuButton)
         setNavActive(downloadsMenuButton)
-
         modelSpinner.visibility = View.GONE
         inputEdit.visibility = View.GONE
         inputCharCounter.visibility = View.GONE
@@ -463,11 +431,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshSpinner() {
         val found = mutableListOf<Pair<String, String>>()
-
         filesDir.listFiles()
             ?.filter { it.isDirectory && isModelDir(it) }
             ?.sortedBy { it.name }
             ?.forEach { found.add(it.name to makeDisplayName(it.name)) }
+        if (isModelDir(filesDir)) found.add(0, "" to makeDisplayName(""))
 
         if (isModelDir(filesDir)) found.add(0, "" to "язык по умолчанию (RU -> EN)")
 
@@ -476,14 +444,12 @@ class MainActivity : AppCompatActivity() {
 
         if (installedModels.isEmpty()) {
             modelSpinner.visibility = View.GONE
-            outputText.text = "Язык не установлен, зайдите в 'загрузки' и установите нужные языковые пакеты."
+            outputText.text = "Язык не установлен. Зайдите в «Загрузки» и установите нужные языковые пакеты."
             runButton.isEnabled = false
             modelSpinner.isEnabled = false
             return
         }
-
         modelSpinner.visibility = View.VISIBLE
-
         val adapter = ArrayAdapter(this, R.drawable.spinner_list, installedModels.map { it.second })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         modelSpinner.onItemSelectedListener = null
@@ -492,7 +458,6 @@ class MainActivity : AppCompatActivity() {
         val restoredPos = installedModels.indexOfFirst { it.first == selectedModelStem }
             .takeIf { it >= 0 } ?: 0
         modelSpinner.setSelection(restoredPos, false)
-
         modelSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 val stem = installedModels[pos].first
@@ -500,7 +465,6 @@ class MainActivity : AppCompatActivity() {
             }
             override fun onNothingSelected(parent: AdapterView<*>) = Unit
         }
-
         val targetStem = installedModels[restoredPos].first
         if (targetStem != selectedModelStem || !isReady) {
             selectedModelStem = targetStem
@@ -522,7 +486,6 @@ class MainActivity : AppCompatActivity() {
         runButton.isEnabled = false
         modelSpinner.isEnabled = false
         outputText.text = "Загрузка языкового пакета…"
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 model?.close()
@@ -545,6 +508,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun makeDisplayName(stem: String): String {
+        val dir = if (stem.isEmpty()) filesDir else File(filesDir, stem)
+        val configFile = File(dir, "model_config.json")
+
+        if (configFile.exists()) {
+            try {
+                val json = JSONObject(configFile.readText())
+                val srcLang = json.optString("input_language",  "").trim().uppercase()
+                val tgtLang = json.optString("output_language", "").trim().uppercase()
+                val bidir = json.optBoolean("bidirectional", false)
+                if (srcLang.isNotEmpty() && tgtLang.isNotEmpty()) {
+                    val arrow = if (bidir) "<->" else "->"
+                    return "$srcLang $arrow $tgtLang"
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not read model_config.json for '$stem'", e)
+            }
+        }
+
+        // Fallback
+        if (stem.isEmpty()) return "Языковой пакет по умолчанию"
         val parts = stem.split("-")
         return if (parts.size >= 2 && parts.take(2).all { it.length <= 3 && it.all(Char::isLetter) }) {
             val arrow = "${parts[0].uppercase()} -> ${parts[1].uppercase()}"
@@ -559,7 +542,6 @@ class MainActivity : AppCompatActivity() {
     private fun loadDownloadsList() {
         val installedStems = buildInstalledStems().toMutableSet()
         val localOnlyItems = buildLocalOnlyModels(installedStems)
-
         setDownloadsConnectionStatus(loading = true, error = null)
         setDownloadsPacksStatus(serverCount = 0, localExtra = localOnlyItems.size, loading = true)
 
@@ -570,7 +552,6 @@ class MainActivity : AppCompatActivity() {
             onDelete = ::deleteModel,
         )
         downloadsList.adapter = downloadsAdapter
-
         updateServiceCallbacks()
         downloadService?.getActiveStates()?.forEach { (file, state) ->
             if (state.installing) downloadsAdapter.setInstalling(file)
@@ -586,7 +567,6 @@ class MainActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     serverModelList = serverModels
-
                     setDownloadsConnectionStatus(loading = false, error = null)
                     setDownloadsPacksStatus(
                         serverCount = serverModels.size,
@@ -600,7 +580,6 @@ class MainActivity : AppCompatActivity() {
                         onDelete = ::deleteModel,
                     )
                     downloadsList.adapter = downloadsAdapter
-
                     updateServiceCallbacks()
                     downloadService?.getActiveStates()?.forEach { (file, state) ->
                         if (state.installing) downloadsAdapter.setInstalling(file)
@@ -630,7 +609,7 @@ class MainActivity : AppCompatActivity() {
                 downloadsConnectionStatus.visibility = View.VISIBLE
             }
             error != null -> {
-                downloadsConnectionStatus.text = "Ошибка подключения к серверу. Проверьте интернет или адрес сервера."
+                downloadsConnectionStatus.text = "Ошибка подключения. Проверьте интернет или адрес сервера."
                 downloadsConnectionStatus.setTextColor(colorOrange)
                 downloadsConnectionStatus.setBackgroundResource(R.drawable.bg_warning_card)
                 downloadsConnectionStatus.visibility = View.VISIBLE
@@ -641,13 +620,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setDownloadsPacksStatus(serverCount: Int, localExtra: Int, loading: Boolean) {
         if (loading) { downloadsStatus.visibility = View.GONE; return }
-        val text = when {
+        downloadsStatus.text = when {
             serverCount > 0 && localExtra > 0 -> "Доступные и установленные языковые пакеты:"
-            serverCount > 0                   -> "Доступные языковые пакеты:"
-            localExtra > 0                    -> "Установленные языковые пакеты:"
-            else                              -> "Языковых пакетов нет."
+            serverCount > 0 -> "Доступные языковые пакеты:"
+            localExtra > 0 -> "Установленные языковые пакеты:"
+            else -> "Языковых пакетов нет."
         }
-        downloadsStatus.text = text
         downloadsStatus.setTextColor(colorWhite)
         downloadsStatus.setBackgroundResource(R.drawable.bg_neon_card)
         downloadsStatus.visibility = View.VISIBLE
@@ -655,9 +633,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun buildLocalOnlyModels(installedStems: Set<String>): List<ModelInfo> {
         return installedStems.map { stem ->
-            val dir    = if (stem.isEmpty()) filesDir else File(filesDir, stem)
+            val dir = if (stem.isEmpty()) filesDir else File(filesDir, stem)
             val sizeMb = (dirSizeBytes(dir) / (1024L * 1024L)).toInt()
-            val name   = if (stem.isEmpty()) "Языковой пакет по умолчанию (RU -> EN)" else makeDisplayName(stem)
+            val name = if (stem.isEmpty()) "Языковой пакет по умолчанию (RU -> EN)" else makeDisplayName(stem)
             ModelInfo(name = name, file = "$stem.zip", size_mb = sizeMb)
         }
     }
@@ -699,16 +677,14 @@ class MainActivity : AppCompatActivity() {
     private fun deleteModel(modelInfo: ModelInfo) {
         val stem = modelInfo.file.removeSuffix(".zip")
         val dir = if (stem.isEmpty()) filesDir else File(filesDir, stem)
-
         lifecycleScope.launch(Dispatchers.IO) {
             if (stem.isEmpty()) {
-                listOf("encoder.onnx", "decoder.onnx", "tokenizer")
+                listOf("encoder.onnx", "decoder.onnx", "tokenizer", "model_config.json")
                     .forEach { File(dir, it).deleteRecursively() }
             } else {
                 dir.deleteRecursively()
             }
             File(filesDir, "${modelInfo.file}.part").delete()
-
             withContext(Dispatchers.Main) {
                 downloadsAdapter.removeInstalled(modelInfo.file)
                 Toast.makeText(this@MainActivity, "Языковой пакет удалён", Toast.LENGTH_SHORT).show()
@@ -717,33 +693,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun resolveTokenLen(rawTokens: LongArray, padId: Long): Int {
-        val actual = rawTokens.indexOfLast { it != padId }.let { if (it == -1) 1 else it + 1 }
-        return TOKEN_LEN_STEPS.firstOrNull { it >= actual } ?: TOKEN_LEN_STEPS.last()
-    }
-
     private fun runInference(text: String, onPartial: ((String) -> Unit)? = null): String {
         val tok = tokenizer ?: return "Токенайзер не загружен"
         val mdl = model ?: return "Языковой пакет не загружен"
-
         val startTime = System.currentTimeMillis()
-
-        val rawTokens = tok.encode(text, TOKEN_LEN_STEPS.last())
-        val srcLen = resolveTokenLen(rawTokens, tok.padId.toLong())
-        val srcTokens = rawTokens.copyOf(srcLen).also { arr ->
-            for (i in arr.size until srcLen) arr[i] = tok.padId.toLong()
-        }
-
-        val memory = mdl.encode(srcTokens, srcLen)
-        val modelDim = memory.size / srcLen
-
+        val srcTokens = tok.encode(text, MAX_SRC_LEN)
+        val srcMask = BooleanArray(MAX_SRC_LEN) { i -> srcTokens[i] != tok.padId.toLong()}
+        val memory = mdl.encode(srcTokens, srcMask)
+        val modelDim = memory.size / MAX_SRC_LEN
         var firstTokenTimeMs: Long? = null
         var tokenCount = 0
-
         val outTokens = GreedySearch.search(
             model = mdl,
             memory = memory,
-            srcLen = srcLen,
+            srcMask = srcMask,
+            srcLen = MAX_SRC_LEN,
             modelDim = modelDim,
             maxLen = MAX_OUTPUT_LEN,
             bosId = tok.bosId.toLong(),
@@ -754,32 +718,20 @@ class MainActivity : AppCompatActivity() {
             if (firstTokenTimeMs == null) firstTokenTimeMs = now
             onPartial?.invoke(tok.decode(tokens, len))
         }
-
         val endTime = System.currentTimeMillis()
         val generationMs = endTime - (firstTokenTimeMs ?: endTime)
-        val tokensPerSec = if (generationMs > 0) tokenCount * 1000.0 / generationMs else 0.0
-
-        Log.i(TAG_PERF, "Токенов на входе: $srcLen")
-        Log.i(TAG_PERF, "Время до первого токена: ${(firstTokenTimeMs ?: endTime) - startTime} мс")
-        Log.i(TAG_PERF, "Скорость: ${"%.2f".format(tokensPerSec)} т/с ($tokenCount за ${generationMs} мс)")
-        Log.i(TAG_PERF, "Общее время: ${endTime - startTime} мс")
-
+        val tokPerSec = if (generationMs > 0) tokenCount * 1000.0 / generationMs else 0.0
+        Log.i(TAG_PERF, "src=$MAX_SRC_LEN tok | ttft=${(firstTokenTimeMs ?: endTime) - startTime} ms | ${"%,.1f".format(tokPerSec)} tok/s | total=${endTime - startTime} ms")
         return tok.decode(outTokens, outTokens.size)
     }
-
 
     companion object {
         private const val TAG = "MainActivity"
         private const val TAG_PERF = "InferencePerf"
-
         private const val WAKELOCK_INFERENCE_TAG = "polyglot:inference"
         private const val WAKELOCK_INFERENCE_TIMEOUT_MS = 5 * 60 * 1000L
-
         const val MAX_CHAR_INPUT = 2000
         const val MAX_OUTPUT_LEN = 512
-
-        val TOKEN_LEN_STEPS = intArrayOf(
-            128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512
-        )
+        const val MAX_SRC_LEN = 512
     }
 }
